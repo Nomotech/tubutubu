@@ -31,10 +31,11 @@ function drawCircle(x,y,r,color) {
 
 var x = 0;
 var y = 0;
-var row = 25;
+var row = 20;
 var forceMax = 0.5;
 var vMax = 20;
 var gravity = 0.3;                     //重力
+var theta = 2 * Math.PI;
 var rangeMax = 30;                      //影響半径
 var squareRange = rangeMax * rangeMax;        //影響半径の二乗
 var densityMin = 4;                     //流体の密度
@@ -61,10 +62,14 @@ for(var i = 0;i<circleNum;i++){
     circle[i].density = 0;
     circle[i].pressure = 0;
 }
-circle[0].x = 50;
-circle[0].y = 50;
-circle[0].r = 10;
 
+//マウスカーソル
+mousePoint = {};
+mousePoint.x = 0;
+mousePoint.y = 0;
+mousePoint.force = 0;
+mousePoint.forceRange = 5;
+mousePoint.color = "rgb(255, 155, 0)";
 
 var wallNum = 4;
 var wall = new Array(wallNum);
@@ -116,30 +121,18 @@ function collision(){
             b = cj.vy - ci.vy;
             ci.fx += a * viscosityWeight;
             ci.fy += b * viscosityWeight;
-
         }
-        // for(j = 0;j<wallNum;j++){
-        //     d = lengthWall(ci,wall[j]);
-        //     var force = 0;
-        //     if(d.length>0){
-        //         force = d.inv - 1/(ci.r*2 + ci.v*2);
-        //         if(force>forceMax) force = forceMax;
-            
-        //         ci.fy -= force * wall[j].vy;
-        //         ci.fx -= force * wall[j].vx;
-        //         var minR = ci.r + ci.v*2;
-        //         if(d.length<minR){
-        //             ci.x -= (minR - d.length) * wall[j].vx;
-        //             ci.y -= (minR - d.length) * wall[j].vy;
-        //         }
-        //     }
-        //     //circle[num].fx += force * d.x / d.length;   
-        // }
+        d = lengthCircle(ci,mousePoint);
+        if(d.length < mousePoint.forceRange){
+            ci.fx += mousePoint.force * d.x * d.inv;
+            ci.fy += mousePoint.force * d.y * d.inv;
+        }
     }
 }
 
 function move(ci){
-    ci.fy += gravity;
+    ci.fx += gravity * Math.sin(theta);
+    ci.fy += gravity * Math.cos(theta);
     ci.vx += ci.fx;
     ci.vy += ci.fy;
     if(ci.vx > vMax) ci.vx = vMax;
@@ -158,7 +151,6 @@ function move(ci){
 
 function render() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);  //画面のリセット
-
     for(i = 0; i < circleNum; i++) {                   //近くの障害物を検知する
         ci = circle[i];
         ci.neighborsNum = 0;
@@ -171,7 +163,6 @@ function render() {
                 ci.neighbors[ci.neighborsNum++] = cj;
                 cj.neighbors[cj.neighborsNum++] = ci;
             }
-            
         }
     }
 
@@ -184,13 +175,24 @@ function render() {
         move(circle[i]);
     }
 
-    circle[0].x = mouseX;
-    circle[0].y = mouseY;
+    mousePoint.x = mouseX;
+    mousePoint.y = mouseY;
+    drawCircle(mousePoint.x,mousePoint.y,5,mousePoint.color);
     if(mouseL){
-        if(circle[0].r<80)circle[0].r *= 1.3;
-    }else circle[0].r = 5;
-        
-    drawCircle(circle[0].x,circle[0].y,3,"rgb(255, 155, 0)");
-    for(var i = 1 ; i < circleNum;i++) drawCircle(circle[i].x,circle[i].y,circle[i].r-1,"rgb(0, 205, 205)");
+        mousePoint.force = 0.5;
+        mousePoint.forceRange = 200;
+        mousePoint.color = "rgb(50, 205, 50)";
+    }else if(mouseR){
+        mousePoint.force = -1;
+        mousePoint.forceRange = 50;
+        mousePoint.color = "rgb(255, 100, 100)";
+    }else{
+        mousePoint.force = 0;
+        mousePoint.forceRange = 5;
+        mousePoint.color = "rgb(255, 155, 0)";
+    }
+    drawCircle(mousePoint.x,mousePoint.y,mousePoint.forceRange,mousePoint.color);
+    
+    for(var i = 0 ; i < circleNum;i++) drawCircle(circle[i].x,circle[i].y,circle[i].r-1,"rgb(0, 205, 205)");
     requestAnimationFrame(render);
 }render();

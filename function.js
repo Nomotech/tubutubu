@@ -12,7 +12,10 @@
 var mouseX = 50;
 var mouseY = 50;
 var mouseR = false;
+var mouseC = false;
 var mouseL = false;
+//var mouseButton = new InputMouseButton(window);
+
 document.onmousemove = function(e) {
     var rect = e.target.getBoundingClientRect();
     // マウス位置(2D)
@@ -21,12 +24,17 @@ document.onmousemove = function(e) {
     //console.log("X: " + mouseX + " Y: " + mouseY);
 };
 
-document.onmousedown = function(e) {  
-	mouseL = true;
+document.onmousedown = function(e) {
+	//console.log("button: " + e.button + " buttons: " + e.buttons);
+	mouseL = (e.button == 0) ? true : false;
+	mouseC = (e.button == 1) ? true : false; 
+	mouseR = (e.button == 2) ? true : false;
 };
 
 document.onmouseup = function (e){
-  	mouseL = false;  
+	mouseL = false;
+	mouseC = false; 
+	mouseR = false;
 };
 
 function lengthTwoPoint(x1,y1,x2,y2){
