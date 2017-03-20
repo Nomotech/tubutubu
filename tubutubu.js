@@ -21,13 +21,25 @@ function drawBox(x,y,w,h) {
     ctx.strokeRect(x-w/2, y-h/2, w, h);
 }
 
-function drawCircle(x,y,r,color) {
+function drawCircle(x,y,r,color,fill) {
     ctx.strokeStyle = color; 
     ctx.beginPath();
     ctx.lineWidth = 1;
     ctx.arc(x, y, r, 0, Math.PI*2, false);
+    ctx.fillStyle = color;
+    if(fill)ctx.fill();
     ctx.stroke();
 }
+
+
+var ease1;
+var ease2;
+var timer_num = 3;
+var start_time = new Array(timer_num);
+for(i=0;i<timer_num;i++)start_time[i] = [0];
+var move_flag = 0;
+var state = 0;
+
 
 var x = 0;
 var y = 0;
@@ -61,6 +73,7 @@ for(var i = 0;i<circleNum;i++){
     circle[i].neighbors = new Array();
     circle[i].density = 0;
     circle[i].pressure = 0;
+    circle[i].area = 1;
 }
 
 //マウスカーソル
@@ -68,8 +81,10 @@ mousePoint = {};
 mousePoint.x = 0;
 mousePoint.y = 0;
 mousePoint.force = 0;
+mousePoint.cageRange = 0;
 mousePoint.forceRange = 5;
 mousePoint.color = "rgb(255, 155, 0)";
+mousePoint.color2 = "rgb(255, 155, 0)";
 
 var wallNum = 4;
 var wall = new Array(wallNum);
@@ -122,15 +137,38 @@ function collision(){
             ci.fx += a * viscosityWeight;
             ci.fy += b * viscosityWeight;
         }
-        d = lengthCircle(ci,mousePoint);
-        if(d.length < mousePoint.forceRange){
-            ci.fx += mousePoint.force * d.x * d.inv;
-            ci.fy += mousePoint.force * d.y * d.inv;
-        }
+       
+        
+         
     }
 }
 
 function move(ci){
+    
+    d = lengthCircle(ci,mousePoint);
+    switch(ci.area){
+        case 1:
+            if(ci.x < 100)      ci.vx += 100 - ci.x;
+            if(ci.y < 100)      ci.vy += 100 - ci.y;
+            if(ci.x > walllen)  ci.vx += walllen - ci.x;
+            if(ci.y > walllen)  ci.vy += walllen - ci.y;
+            if(d.length < mousePoint.forceRange + 4){
+                ci.fx += mousePoint.force * d.x * d.inv;
+                ci.fy += mousePoint.force * d.y * d.inv;
+            }
+            break;   
+        case 2:
+            if(ci.x < 100)      ci.vx += 100 - ci.x;
+            if(ci.y < 100)      ci.vy += 100 - ci.y;
+            if(ci.x > walllen)  ci.vx += walllen - ci.x;
+            if(ci.y > walllen)  ci.vy += walllen - ci.y;
+            if(d.length > mousePoint.cageRange - 4 && mousePoint.cageRange!=0){
+                ci.vx += (d.length - mousePoint.cageRange + 4) * d.x * d.inv;
+                ci.vy += (d.length - mousePoint.cageRange + 4) * d.y * d.inv;
+            }
+            break;
+        default:break;
+    }
     ci.fx += gravity * Math.sin(theta);
     ci.fy += gravity * Math.cos(theta);
     ci.vx += ci.fx;
@@ -140,16 +178,17 @@ function move(ci){
     ci.v = (Math.sqrt(ci.vx*ci.vx + ci.vy*ci.vy));
     ci.x += ci.vx;
     ci.y += ci.vy;
-    if(ci.x < 100)      ci.vx += 100 - ci.x;
-    if(ci.y < 100)      ci.vy += 100 - ci.y;
-    if(ci.x > walllen)  ci.vx += walllen - ci.x;
-    if(ci.y > walllen)  ci.vy += walllen - ci.y;
-    //ci.vx *= 0.999;
-    //ci.vy *= 0.999;
 }            
             
+function update(){
+    oldmouseL = mouseL;
+    oldmouseC = mouseC;
+    oldmouseR = mouseR;
+    t++;
+}
 
 function render() {
+    var i;
     ctx.clearRect(0, 0, canvas.width, canvas.height);  //画面のリセット
     for(i = 0; i < circleNum; i++) {                   //近くの障害物を検知する
         ci = circle[i];
@@ -170,29 +209,79 @@ function render() {
     //console.log("fy: " + circle[2].fy);
     //if(circle[2].fy!=0)console.log(circle[2].neighborsNum);
 
-    drawField();
-    for(var i = 0 ; i < circleNum;i++){
+    for(i = 0 ; i < circleNum;i++){
         move(circle[i]);
     }
 
+
+    
+
     mousePoint.x = mouseX;
     mousePoint.y = mouseY;
-    drawCircle(mousePoint.x,mousePoint.y,5,mousePoint.color);
+    
+    if(!oldmouseL&mouseL && move_flag == 0){
+        start_time[0][0] = t;
+        move_flag = 1;
+    }
+    if(!oldmouseC&mouseC && move_flag == 0){
+        start_time[0][0] = t;
+        move_flag = 1;
+    }
+    if(!oldmouseR&mouseR && move_flag == 0){
+        mousePoint.cageRange = 100;
+        start_time[0][0] = t;
+        move_flag = 1;
+        for(i = 0;i<circleNum;i++){
+            d = lengthCircle(circle[i],mousePoint);
+            if(d.length < mousePoint.cageRange && mousePoint.cageRange){
+                console.log("po");
+                circle[i].area = 2;
+            }
+            else circle[i].area = 1;
+        }
+    }
+   
     if(mouseL){
+        ease1 = ease("easeInOutExpo",start_time[0],15);
         mousePoint.force = 0.5;
-        mousePoint.forceRange = 200;
-        mousePoint.color = "rgb(50, 205, 50)";
-    }else if(mouseR){
-        mousePoint.force = -1;
-        mousePoint.forceRange = 50;
+        mousePoint.forceRange = 200 * ease1;
+        mousePoint.color = "rgb( 50, 205, 50)";
+        mousePoint.color2 = "rgb(250, 255, 250)";
+        drawCircle(mousePoint.x,mousePoint.y,mousePoint.forceRange,mousePoint.color2,true);
+        drawCircle(mousePoint.x,mousePoint.y,mousePoint.forceRange,mousePoint.color,false);
+    }else if(mouseC){
+        ease1 = ease("easeInOutExpo",start_time[0],10);
+        mousePoint.force = -2;
+        mousePoint.forceRange = 50 * ease1;
         mousePoint.color = "rgb(255, 100, 100)";
+        mousePoint.color2 = "rgb(255, 240, 240)";
+        drawCircle(mousePoint.x,mousePoint.y,mousePoint.forceRange,mousePoint.color2,true);
+        drawCircle(mousePoint.x,mousePoint.y,mousePoint.forceRange,mousePoint.color,false);
+    }else if(mouseR){
+        ease1 = ease("easeOutExpo",start_time[0],10);
+        mousePoint.force = -5 * ease1;
+        mousePoint.forceRange = mousePoint.cageRange * ease1;
+        mousePoint.cageRange = 100;
+        mousePoint.color  = "rgb(100, 100, 255)";
+        mousePoint.color2 = "rgb(250, 250, 255)";
+        drawCircle(mousePoint.x,mousePoint.y,mousePoint.cageRange,mousePoint.color2,true);
+        drawCircle(mousePoint.x,mousePoint.y,mousePoint.cageRange - 10 * (1-ease1),mousePoint.color,false);
+        drawCircle(mousePoint.x,mousePoint.y,mousePoint.cageRange + 10 * (1-ease1),mousePoint.color,false);
     }else{
         mousePoint.force = 0;
         mousePoint.forceRange = 5;
+        mousePoint.cageRange = 0;
         mousePoint.color = "rgb(255, 155, 0)";
+        move_flag=0;
+        for(i = 0;i<circleNum;i++){
+            circle[i].area = 1;
+        }
     }
-    drawCircle(mousePoint.x,mousePoint.y,mousePoint.forceRange,mousePoint.color);
+    drawCircle(mousePoint.x,mousePoint.y,5,mousePoint.color,false);
     
-    for(var i = 0 ; i < circleNum;i++) drawCircle(circle[i].x,circle[i].y,circle[i].r-1,"rgb(0, 205, 205)");
+    drawField();
+    for(i = 0 ; i < circleNum;i++) drawCircle(circle[i].x,circle[i].y,circle[i].r-1,"rgb(0, 205, 205)");
+    
+    update();
     requestAnimationFrame(render);
 }render();

@@ -14,6 +14,9 @@ var mouseY = 50;
 var mouseR = false;
 var mouseC = false;
 var mouseL = false;
+var oldmouseR = false;
+var oldmouseC = false;
+var oldmouseL = false;
 //var mouseButton = new InputMouseButton(window);
 
 document.onmousemove = function(e) {
