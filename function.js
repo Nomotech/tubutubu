@@ -41,6 +41,7 @@ function lengthCircle(cir1,cir2){
 	d.x = cir2.x - cir1.x;
 	d.y = cir2.y - cir1.y;
 	d.length = Math.sqrt(Math.pow(d.x,2) + Math.pow(d.y,2));
+	d.inv = 1 / d.length;
 	return d;
 }
 
