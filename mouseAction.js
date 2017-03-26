@@ -1,6 +1,7 @@
 function mouseAction(){
 	if(!oldmouseL&mouseL && move_flag == 0){
         start_time[0][0] = t;
+        start_time[1][0] = t + 5;
         move_flag = 1;
     }
     if(!oldmouseC&mouseC && move_flag == 0){
@@ -11,27 +12,30 @@ function mouseAction(){
         mousePoint.cageRange = 100;
         start_time[0][0] = t;
         move_flag = 1;
-        for(i = 0;i<circleNum;i++){
-            d = lengthCircle(circle[i],mousePoint);
-            circle[i].cage = (d.length < mousePoint.cageRange && mousePoint.cageRange) ? true : false;
+        for(i = 0;i<objects.length;i++){
+            d = lengthCircle(objects[i],mousePoint);
+            objects[i].cage = (d.length < mousePoint.cageRange && mousePoint.cageRange) ? true : false;
         }
     }
     if(oldmouseR&!mouseR){
-    	for(i = 0;i<circleNum;i++)	circle[i].cage = false;
+    	for(i = 0;i<objects.length;i++)	objects[i].cage = false;
     }
 
    	drawCircle(mousePoint.x,mousePoint.y,5,mousePoint.color);
     if(mouseL){
-        ease1 = ease("easeInOutExpo",start_time[0],13);
-        mousePoint.force = 0.5;
+        ease1 = ease("easeInOutExpo",start_time[0],10);
+        ease2 = ease("easeOutExpo",start_time[1],10);
+        mousePoint.force = 0.8;
         mousePoint.forceRange = 200 * ease1;
         mousePoint.color = "rgb( 50, 205, 50)";
+
         drawFillCircle(mousePoint.x,mousePoint.y,mousePoint.forceRange,"rgb(240, 255, 240)","rgb(250, 255, 250)");
         drawCircle(mousePoint.x,mousePoint.y,mousePoint.forceRange,mousePoint.color);
+        drawCircle(mousePoint.x,mousePoint.y,mousePoint.forceRange * ease2,mousePoint.color);
         drawCircle(mousePoint.x,mousePoint.y,5,mousePoint.color);
     }else if(mouseC){
         ease1 = ease("easeInOutExpo",start_time[0],10);
-        mousePoint.force = -2;
+        mousePoint.force = -5;
         mousePoint.forceRange = 80 * ease1;
         mousePoint.color = "rgb(255, 100, 100)";
         drawFillCircle(mousePoint.x,mousePoint.y,mousePoint.forceRange,"rgb(255, 240, 240)","rgb(255, 180, 180)");

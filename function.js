@@ -9,6 +9,7 @@
 // 	height = window.innerHeight-margine;
 // }, false );
 
+//---------------------------------< mouse >------------------------------------------
 var mouseX = 50;
 var mouseY = 50;
 var mouseR = false;
@@ -40,6 +41,8 @@ document.onmouseup = function (e){
 	mouseR = false;
 };
 
+
+//---------------------------------< length >----------------------------------------------
 function lengthTwoPoint(x1,y1,x2,y2){
 	var dx = x2 - x1;
 	var dy = y2 - y1;
@@ -90,4 +93,41 @@ function lengthWall2(cir,wa){
 		return length;
 	}
 	return 0;
+}
+
+//----------------------------------< draw >-----------------------------------------------
+function drawLine(x1,y1,x2,y2,color){
+    ctx.strokeStyle = color; 
+    ctx.beginPath();    // 1.Pathで描画を開始する
+    ctx.moveTo(x1,y1);  // 2.描画する位置を指定する
+    ctx.lineTo(x2,y2);  // 3.指定座標まで線を引く
+    ctx.stroke();       // 4.Canvas上に描画する
+}
+
+function drawBox(x,y,w,h) {
+    ctx.beginPath();
+    ctx.strokeRect(x-w/2, y-h/2, w, h);
+}
+
+
+function drawCircle(x,y,r,color) {
+    ctx.strokeStyle = color; 
+    ctx.beginPath();
+    ctx.lineWidth = 1;
+    ctx.arc(x, y, r, 0, Math.PI*2, false);
+    ctx.stroke();
+}
+var grad;
+function drawFillCircle(x,y,r,color1,color2) {
+    ctx.strokeStyle = color1; 
+    ctx.beginPath();
+    ctx.lineWidth = 1;
+    ctx.arc(x, y, r, 0, Math.PI*2, false);
+    grad  = ctx.createRadialGradient(x,y,0,x,y,r);
+    grad.addColorStop(0,color1);
+    grad.addColorStop(0.5,color1);     
+    grad.addColorStop(1,color2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+    ctx.stroke();
 }

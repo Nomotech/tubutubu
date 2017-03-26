@@ -1,9 +1,13 @@
-
+var i;
 //tubu
-var column =70;
-var circleNum = 3000;
+
+var objects = [];
+var column =40;
+
+
+var circleNum = 2000;
 var circle = new Array(circleNum);
-for(var i = 0;i<circleNum;i++){
+for(i = 0;i<circleNum;i++){
     circle[i] = {};
     circle[i].color = "rgb(0, 205, 205)";
     circle[i].r = 3;
@@ -11,17 +15,39 @@ for(var i = 0;i<circleNum;i++){
     circle[i].vy = 0;
     circle[i].v = 0;
     circle[i].x = i%column * circle[i].r * 2.5 + 100 + 10;
-    circle[i].y = Math.ceil((i + 1)/column) * circle[i].r * 2.5 + 100 + 10;  
+    circle[i].y = Math.ceil((i + 1)/column) * circle[i].r * 2.5 + 100 + 80;  
     circle[i].fx = 0;
     circle[i].fy = 0;
-    circle[i].m = 0.5;
+    circle[i].m = 1.0;
     circle[i].neighborsNum = 0;
     circle[i].neighbors = new Array();
     circle[i].density = 0;
     circle[i].pressure = 0;
     circle[i].cage = false;
     circle[i].area = 1;
+    circle[i].type = 'normal';
+
+    objects.push(circle[i]);
 }
+
+var num;
+var sum = 0;
+
+num = 700;
+for(i = sum ;i < sum + num ; i++){
+    circle[i].color = "rgb(255, 105, 55)";
+    circle[i].type = 'fire';
+    circle[i].m = 0.5;
+}
+sum += num ;
+
+num = 700;
+for(i = sum ;i < sum + num ; i++){
+    circle[i].color = "rgb(115, 100, 255)";
+    circle[i].type = 'frg';
+    circle[i].m = 1.4;
+}
+sum += num ;
 
 //マウスカーソル
 mousePoint = {};
@@ -39,8 +65,8 @@ for(var i = 0;i<wallNum;i++){
     wall[i] = {};
 }
 var fieldOffset = 50;
-var fieldWidth = 600;
-var fieldHeight = 800;
+var fieldWidth = 500;
+var fieldHeight = 500;
 function drawField(){
     wall[0].x1 = fieldOffset;				wall[0].y1 = fieldOffset;       		wall[0].x2 = fieldOffset;       		wall[0].y2 = fieldOffset + fieldHeight; 
     wall[0].length = lengthTwoPoint(wall[0].x1,wall[0].y1,wall[0].x2,wall[0].y2); wall[0].vx =-1; wall[0].vy = 0;
@@ -111,8 +137,8 @@ function areaAllocation(){
 	for(let i = 0; i< area.length;i++){
 		area[i].objects = [];
 	}
-	for(let i = 0;i < circleNum; i++){
-		ci = circle[i];
+	for(let i = 0;i < objects.length; i++){
+		ci = objects[i];
 		r = Math.floor((ci.x - fieldOffset + areaWidth*3 ) / areaWidth);
 		c = Math.floor((ci.y - fieldOffset + areaHeight*3) / areaHeight);
 		num = r + c * areaColumn;
