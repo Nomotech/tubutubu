@@ -59,6 +59,7 @@ mousePoint.forceRange = 5;
 mousePoint.color = "rgb(255, 155, 0)";
 mousePoint.color2 = "rgb(255, 155, 0)";
 
+//------------------------------------< wall >-----------------------------------
 var wallNum = 4;
 var wall = new Array(wallNum);
 for(var i = 0;i<wallNum;i++){
@@ -83,6 +84,8 @@ function drawField(){
     for(var i = 0;i<wallNum;i++) drawLine(wall[i].x1,wall[i].y1,wall[i].x2,wall[i].y2,"rgb(0, 0, 0)");
 }
 
+
+//------------------------------------< grid >-----------------------------------------------
 /*    column
 	.________________________________
 row |                                |
