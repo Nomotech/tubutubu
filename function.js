@@ -8,7 +8,7 @@
 // 	width = window.innerWidth-margine;
 // 	height = window.innerHeight-margine;
 // }, false );
-
+//po
 //---------------------------------< mouse >------------------------------------------
 var mouseX = 50;
 var mouseY = 50;
