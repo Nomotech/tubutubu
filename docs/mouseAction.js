@@ -15,7 +15,7 @@ function mouseAction(){
         for(i = 0;i<objects.length;i++){
             d = lengthCircle(objects[i],mousePoint);
             objects[i].cage = (d.length < mousePoint.cageRange && mousePoint.cageRange) ? true : false;
-            if(objects[i].cage) objects[i].effectRange = 15;
+            //if(objects[i].cage) objects[i].effectRange = 15;
         }
     }
     if(oldmouseR&!mouseR){

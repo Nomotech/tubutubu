@@ -445,3 +445,14 @@ function drawFillCircle(x,y,r,color1,color2) {
     ctx.fill();
     ctx.stroke();
 }
+
+function CheckInput(){
+	for(var i=0; i<document.form1.elements.length;i++){
+        // i番目のチェックボックスがチェックされているかを判定
+        if(document.form1.elements[i].checked){
+            zone[i].flag = true;    
+        }else{
+        	zone[i].flag = false;
+        }
+    }
+}

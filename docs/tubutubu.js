@@ -160,6 +160,7 @@ function update(){
 
 function render() {
     var i;
+    CheckInput();
     ctx.clearRect(0, 0, canvas.width, canvas.height);  //画面のリセット
     areaAllocation();
 
@@ -167,10 +168,10 @@ function render() {
     var ave;
     var d;
     for(i = 0 ; i < objects.length;i++){
-        ave = 0;
+        ave = 0;	
         var ci = objects[i];
-        //heatZone(ci,zone[0]);   //heatzone
-        //heatZone(ci,zone[1]);   //coolzone
+        if(zone[0].flag)heatZone(ci,zone[0]);   //heatzone
+        if(zone[1].flag)heatZone(ci,zone[1]);   //coolzone
         thermography(ci);
         for(let j = 0; j < ci.neighbors.length; j++){
             d = ci.neighbors[j].effectRange - ci.effectRange;

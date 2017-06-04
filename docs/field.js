@@ -184,16 +184,18 @@ function areaAllocation(){
 var zoneNum = 2;
 var zone = new Array(zoneNum);
 for(let i = 0; i<zone.length;i++) zone[i] = {};
+zone[0].flag = 0;
 zone[0].x = 500;
 zone[0].y = 500;
 zone[0].width = 100;
 zone[0].height = 100;
 zone[0].effect = function(ci){
-	ci.effectRange += 0.0;
+	ci.effectRange += 0.05;
 	if(ci.effectRange > 16) ci.effectRange = 14;
 	ci.r = ci.effectRange * 0.3;
 }
 
+zone[1].flag = 0;
 zone[1].x = 100;
 zone[1].y = 500;
 zone[1].width = 100;
