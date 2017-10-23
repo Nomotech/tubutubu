@@ -5,7 +5,7 @@ var objects = [];
 var column =50;
 
 
-var circleNum = 3000;
+var circleNum = 1000;
 var circle = new Array(circleNum);
 for(i = 0;i<circleNum;i++){
     circle[i] = {};
@@ -46,15 +46,6 @@ for(i = sum ;i < sum + num ; i++){
 }
 sum += num ;
 
-num = 1000;
-for(i = sum ;i < sum + num ; i++){
-    //circle[i].color = "rgb(255, 105, 55)";
-    //circle[i].type = 'fire';
-    //circle[i].m = 0.5;
-    circle[i].effectRange = 8;
-    circle[i].r = circle[i].effectRange * 0.3;
-}
-sum += num ;
 
 // num = 700;
 // for(i = sum ;i < sum + num ; i++){
@@ -147,8 +138,8 @@ row |                                |
 */
 var areaWidth  = 20;
 var areaHeight = 20;
-var areaColumn = fieldWidth/10 + 6;
-var areaRow = fieldHeight/10 + 6;
+var areaColumn = fieldWidth/areaWidth + 6;
+var areaRow = fieldHeight/areaHeight + 6;
 var area = new Array(areaColumn * areaRow);
 for(let i = 0; i<area.length;i++){
 	area[i] = {};
@@ -181,8 +172,8 @@ function areaAllocation(){
 		c = Math.floor((ci.y - fieldOffset + areaHeight*3) / areaHeight);
 		num = r + c * areaColumn;
 		if(num > 0 && num < area.length) ci.area = num;
-		// if((c%2==0&&r%2==0)||(c%2==1&&r%2==1))ci.color = "rgb(0, 205, 205)";
-		// else ci.color = "rgb(255, 155, 155)";
+		 if((c%2==0&&r%2==0)||(c%2==1&&r%2==1))ci.color = "rgb(0, 205, 205)";
+		 else ci.color = "rgb(255, 155, 155)";
 		for(let j = 0;j<area[ci.area].neighbors.length ;j++){
 			num = area[ci.area].neighbors[j];
 			area[num].objects.push(i);

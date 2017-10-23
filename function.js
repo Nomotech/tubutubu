@@ -308,7 +308,7 @@ document.onkeydown = function (e){
   //console.log(e);
   key[e.keyCode] = 1;
   keyCharacter = keyName[e.keyCode];
-  console.log(keyCharacter + ": " + e.keyCode);
+  //console.log(keyCharacter + ": " + e.keyCode);
 }
 document.onkeyup = function (e){
   if(!e)e = window.event;

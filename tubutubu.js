@@ -1,3 +1,10 @@
+'use strict';
+console.debug = function(){/* NOP */};
+console.info = function(){/* NOP */};
+console.log = function(){/* NOP */};
+console.warn = function(){/* NOP */};
+//console.error = function(){/* NOP */};
+
 onload = function() {
 
 };
@@ -32,20 +39,17 @@ var viscisityMax = 0.12;                //粘性係数
 
 
 
-
-
-
-
 var po = [];
+var i,j;
+var d;
+var ci,cj;
+var weight;
+var pressureWeight;
+var viscosityWeight;
+var a,b;
 
 function collision(){
-    var i,j;
-    var d;
-    var ci,cj;
-    var weight;
-    var pressureWeight;
-    var viscosityWeight;
-    var a,b;
+    
     for(i = 0; i < objects.length; i++) objects[i].neighbors = [];
     for(i = 0; i < objects.length; i++) {                   //近くの障害物を検知する
         ci = objects[i];
@@ -129,7 +133,7 @@ function move(ci){
         if(ci.y > fieldOffset + fieldHeight) ci.vy += fieldOffset + fieldHeight - ci.y;
         
     }
-    for(j = 0;j<wall.length;j++){
+    for(let j = 0;j<wall.length;j++){
         d = lengthPointLine(ci,wall[j]);
         if(d.length < ci.effectRange + wall[j].r){
             ci.vx += (ci.effectRange + wall[j].r - d.length) * d.x * d.inv;
@@ -164,11 +168,11 @@ function render() {
     var d;
     for(i = 0 ; i < objects.length;i++){
         ave = 0;
-        ci = objects[i];
+        var ci = objects[i];
         //heatZone(ci,zone[0]);   //heatzone
         //heatZone(ci,zone[1]);   //coolzone
         thermography(ci);
-        for(j = 0; j < ci.neighbors.length; j++){
+        for(let j = 0; j < ci.neighbors.length; j++){
             d = ci.neighbors[j].effectRange - ci.effectRange;
             ci.neighbors[j].effectRange -= d * ci.tc;
             ci.effectRange += d * ci.tc;
@@ -182,12 +186,10 @@ function render() {
     //つぶの移動
     for(i = 0 ; i < objects.length;i++)  move(objects[i]);
 
-
     //マウス
     mousePoint.x = mouseX;
     mousePoint.y = mouseY;
     mouseAction();
-    
     
     drawField();    //フィールドの描画
     for(i = 0 ; i < objects.length;i++){
@@ -197,5 +199,5 @@ function render() {
     drawZone();
     
     update();
-    requestAnimationFrame(render);
+    window.requestAnimationFrame(render);
 }render();
